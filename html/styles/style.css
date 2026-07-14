@@ -1,0 +1,64 @@
+body {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: black;
+}
+
+button {
+  background: gray;
+  border: outset 6px black;
+}
+
+header {
+  text-align: center;
+  width: 100%;
+  border: solid 1px green;
+  margin: 10px;
+}
+
+h1 {
+  font-family: monospace;
+  font-weight: bolder;
+  font-smooth: never;
+  -webkit-font-smoothing : none;
+  color: green;
+}
+
+button:active {
+  border-width: 4px;
+}
+
+#init-connection {
+  margin: 10px;
+}
+
+#screen {
+  border: solid 1px green;
+  width: 90vw;
+  aspect-ratio: 2 / 1;
+  image-rendering: pixelated;
+  margin-bottom: 10px;
+}
+
+#keyboard {
+  background: red;
+  display: grid;
+  width: 50%;
+  height: 200px;
+}
+
+.retro-text {
+  /* Apply the 8-bit font and use monospace as a backup */
+  font-family: 'Press Start 2P', monospace; 
+  
+  /* Stick to multiples of 8 for authentic pixel layouts */
+  font-size: 16px; 
+  line-height: 1.5;
+  
+  /* CRITICAL: Keeps pixel edges perfectly sharp and removes blur */
+  image-rendering: pixelated;
+  -webkit-font-smoothing: none;
+  -moz-osx-font-smoothing: grayscale;
+}

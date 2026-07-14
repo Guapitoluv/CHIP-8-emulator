@@ -1,0 +1,8 @@
+# CHIP-8
+...
+
+## FONTSET (l11, chip8.py):
+characters: "0123456789ABCDEF"
+characters_quantity: 16
+chip8's memory[i -> i+5] === characters[i]
+chip8's memory[0x000 -> 0x04F] (0->79=80) === characters[0 -> 15] (16)
