@@ -12,7 +12,7 @@ export class WaitingKeyMsg extends Message {
 
 export class RestartMsg extends Message {
     constructor(key) {
-        super("restart");
+        super("reset");
     }
 }
 

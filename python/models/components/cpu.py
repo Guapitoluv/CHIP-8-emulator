@@ -30,7 +30,6 @@ class CPU:
     
     
     def reset(self) -> None:
-        print("cpu inner reset")
         self.op_00E0()
         self.registers.reset()
         self.keyboard.reset()

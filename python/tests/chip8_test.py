@@ -42,4 +42,7 @@ def test_DXYN():
     
     assert chip8.cpu.registers.V[0xF] == 1
 
+def test_all():
+    ...
+
 test_DXYN()
