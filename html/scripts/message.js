@@ -23,6 +23,13 @@ export class PressedKeyMsg extends Message {
     }
 }
 
+export class ReleasedKeyMsg extends Message {
+    constructor(key) {
+        super("releasedkey");
+        this.key = key;
+    }
+}
+
 export class SoundMsg extends Message {
     constructor(key) {
         super("sound");

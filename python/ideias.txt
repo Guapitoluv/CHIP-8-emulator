@@ -1,0 +1,6 @@
+- Jogar com outra pessoa
+- Jogar com "maquina"
+- alterar tipo de controle
+- Configuracoes
+- Painel de eventos
+- Programar e salvar rom's

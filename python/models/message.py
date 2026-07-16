@@ -17,6 +17,12 @@ class PressedKeyMsg(Message):
 
 
 @dataclass
+class ReleasedKeyMsg(Message):
+    key: str
+    type: str = field(init=False, default="releasedkey")
+
+
+@dataclass
 class WaitingKeyMsg(Message):
     type: str = field(init=False, default="waiting_key")
 
@@ -31,6 +37,12 @@ class DisplayMsg(Message):
 class SoundMsg(Message):
     playing: bool
     type: str = field(init=False, default="sound")
+
+
+@dataclass
+class DelayMsg(Message):
+    value: bool
+    type: str = field(init=False, default="delay")
 
 
 @dataclass

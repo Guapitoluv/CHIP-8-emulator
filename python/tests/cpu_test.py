@@ -47,7 +47,7 @@ def test_2NNN() -> None: #A
     
     cpu.cycle()
     
-    assert cpu.registers.sp == 1
+    assert cpu.registers.sp == 1 #deu erro
     assert cpu.stack[0] == 0x202
     assert cpu.registers.pc == 0x200
 

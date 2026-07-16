@@ -2,21 +2,26 @@ import asyncio
 import json
 import time
 
-from models.message import WaitingKeyMsg, DisplayMsg, SoundMsg
+from models.message import WaitingKeyMsg, DisplayMsg, SoundMsg, DelayMsg
+from utils import Logger
 
+logger = Logger()
 
 class EmulatorServer:
-    def __init__(self, chip8) -> None:
+    def __init__(self, chip8, debugger) -> None:
         self.chip8 = chip8
+        self.debugger = debugger
         self.last_timer = time.monotonic()
         self.last_display = time.monotonic()
         self.sent_waiting = False
         self.sent_sound = False
+        self.sent_delay = False
     
     
     async def emulator_loop(self, ws):
         while self.chip8.running:
             self.run_cpu()
+            
             await self.update_waiting_key(ws)
             await self.update_timers(ws)
             await self.update_display(ws)
@@ -33,9 +38,9 @@ class EmulatorServer:
     
     async def update_waiting_key(self, ws):
         if self.chip8.waiting_key and not self.sent_waiting:
-            print("sending waiting key")
+            logger.log("sending waiting key")
             await WaitingKeyMsg().send(ws)
-            print("sent waiting key")
+            logger.log("sent waiting key")
             self.sent_waiting = True
         
         if not self.chip8.waiting_key:
@@ -51,11 +56,17 @@ class EmulatorServer:
             self.last_timer += 1/60
             
             sound_running = self.chip8.timers.st > 0
+            delay_running = self.chip8.timers.dt > 0
             
             if sound_running != self.sent_sound:
-                print("sending_sound")
+                logger.log("sending_sound")
                 await SoundMsg(sound_running).send(ws)
                 self.sent_sound = sound_running
+            
+            if delay_running != self.sent_delay:
+                logger.log("sending_delay")
+                #await DelayMsg(delay_running).send(ws)
+                self.sent_delay = delay_running
     
     
     async def update_display(self, ws):

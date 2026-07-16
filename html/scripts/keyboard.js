@@ -1,5 +1,5 @@
 import { server } from "./index.js";
-import { PressedKeyMsg } from "./message.js";
+import { PressedKeyMsg, ReleasedKeyMsg } from "./message.js";
 
 const keysound = new Audio("midia/sounds/dragon-studio-single-key-press-393908.mp3")
 const keyboard = document.getElementById("keyboard");
@@ -10,6 +10,12 @@ keysound.volume = 0.25;
 function sendKey(key) {
     const msg = new PressedKeyMsg(key);
     console.log("sending key: "+key);
+    server.ws.send(JSON.stringify(msg));
+}
+
+function releaseKey(key) {
+    const msg = new ReleasedKeyMsg(key);
+    console.log("releasing key: "+key);
     server.ws.send(JSON.stringify(msg));
 }
 
@@ -27,11 +33,19 @@ for (let i=0,j=0;i<chars.length;i++) {
     key.style.gridRow = j;
     key.style.gridColumn = i%4+1;
     
-    key.addEventListener("click", () => {
+    key.addEventListener("pointerdown", () => {
+        console.log("pressed key: "+currChar);
+        keysound.currentTime = 0;
+        keysound.play();
+        sendKey(chars[i]);
+    });
+    
+    
+    key.addEventListener("pointerup", () => {
         console.log("clicked key: "+currChar);
         keysound.currentTime = 0;
         keysound.play();
-        if (server.waiting_key) sendKey(chars[i]);
+        releaseKey(chars[i])
     });
     
     keyboard.append(key)

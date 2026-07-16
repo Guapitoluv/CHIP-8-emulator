@@ -11,19 +11,30 @@ export class Server {
         
         this.onDisplay = null;
         this.onSound = null;
+        this.onDelay = null;
         this.onWaitingKey = null;
         
         if (startConn) this.startConnection();
     }
     
-    startConnection() {
+    
+    async startConnection() {
         this.ws = new WebSocket(this.url);
-        this.connection = true;
-        
-        this.ws.onopen = () => console.log("WebSocket conectado");
-        this.ws.onerror = e => console.log("Erro websocket "+e);
         this.ws.onmessage = e => this.onmessage(e);
+    
+        return new Promise((resolve, reject) => {
+            this.ws.onopen = () => {
+                console.log("WebSocket conectado");
+                this.connection = true;
+                resolve();
+            };
+            this.ws.onerror = (e) => {
+                console.log("Erro websocket " + e);
+                reject(e);
+            };
+        });
     }
+    
     
     onmessage(event) {
         const data = JSON.parse(event.data);
@@ -31,6 +42,7 @@ export class Server {
         switch (data.type) {
             case "display": this.onDisplay?.(data.pixels); break;
             case "sound": this.onSound?.(data.playing); break;
+            case "delay": this.onDelay?.(data.value); break;
             case "waiting_key": this.onWaitingKey?.(); break;
         }
     }
@@ -38,6 +50,7 @@ export class Server {
 
 
 const startServerConnectionBtn = document.getElementById("init-connection");
+const serverConnection = document.getElementById("server_is_connected");
 const restartBtn = document.getElementById("restart");
 const canvas = document.getElementById("screen");
 const ctx = canvas.getContext("2d");
@@ -50,11 +63,19 @@ function sendRestart() {
 }
 
 restartBtn.addEventListener("click", () => {
-    if (server.ws) sendRestart()
+    if (server.ws) sendRestart();
 });
 
-startServerConnectionBtn.addEventListener("click", () => {
-    server.startConnection()
+startServerConnectionBtn.addEventListener("click", async () => {
+    try {
+        await server.startConnection();
+    } catch (err) {
+        console.log("Falha ao conectar:", err);
+        return;
+    }
+    
+    serverConnection.classList.add("connected");
+    console.log(server.ws)
     
     server.onDisplay = drawPixels;
     
@@ -63,6 +84,7 @@ startServerConnectionBtn.addEventListener("click", () => {
         server.waiting_key = true;
     }
     server.onSound = (playing) => console.log("received sound");
+    server.onDelay= (value) => console.log("received delay");
     
     function drawPixels(pixels) {
         const width = 64;

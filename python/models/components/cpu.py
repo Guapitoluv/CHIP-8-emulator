@@ -27,12 +27,14 @@ class CPU:
         self.waiting_key = False
 
         self.registers: Registers = Registers()
+        self.stack.registers = self.registers
     
     
     def reset(self) -> None:
         self.op_00E0()
         self.registers.reset()
         self.keyboard.reset()
+        self.stack.reset()
     
     
     @staticmethod
@@ -115,7 +117,7 @@ class CPU:
         self.display.clear()
     
     def op_00EE(self) -> None:
-        self.registers.pc = stack.pop()
+        self.registers.pc = self.stack.pop()
     
     # ================================================
     #     CASE 1 -> CASE 7
@@ -125,8 +127,7 @@ class CPU:
         self.registers.pc = opcode & 0x0FFF
         
     def op_2NNN(self, opcode: int) -> None:
-        self.stack[self.registers.sp] = self.registers.pc
-        self.registers.sp += 1
+        self.stack.push(self.registers.pc)
         self.registers.pc = opcode & 0x0FFF
     
     def op_3XNN(self, opcode: int) -> None:
@@ -321,7 +322,7 @@ class CPU:
         # VX recebe o valor do delay timer
         x: int = (opcode >> 8) & 0xF
     
-        self.registers.V[x] = self.timers.delay_timer
+        self.registers.V[x] = self.timers.dt
     
         
     def op_FX0A(self, opcode: int) -> None:
@@ -345,7 +346,7 @@ class CPU:
     
         x: int = (opcode >> 8) & 0xF
     
-        self.timers.delay_timer = self.registers.V[x]
+        self.timers.dt = self.registers.V[x]
     
     
     def op_FX18(self, opcode: int) -> None:
@@ -354,7 +355,7 @@ class CPU:
     
         x: int = (opcode >> 8) & 0xF
     
-        self.timers.sound_timer = self.registers.V[x]
+        self.timers.st = self.registers.V[x]
     
     
     def op_FX1E(self, opcode: int) -> None:
